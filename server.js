@@ -48,3 +48,18 @@ app.delete('/posts/:id', (req, res) => {
     posts = posts.filter(p => p.id != req.params.id);
     res.send('Post deleted');
 });
+
+const jwt = require('jsonwebtoken');
+const auth = require('./middleware/auth');
+
+app.post('/login', (req, res) => {
+    const user = { username: req.body.username };
+
+    const token = jwt.sign(user, 'secretkey');
+
+    res.json({ token });
+});
+
+app.post('/protected-post', auth, (req, res) => {
+    res.send('Protected post created');
+});

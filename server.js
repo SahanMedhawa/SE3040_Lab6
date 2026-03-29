@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 
@@ -62,4 +64,24 @@ app.post('/login', (req, res) => {
 
 app.post('/protected-post', auth, (req, res) => {
     res.send('Protected post created');
+});
+
+app.set('view engine', 'ejs');
+
+app.get('/view-posts', (req, res) => {
+    res.render('posts', { posts });
+});
+
+app.post('/upload', upload.single('image'), (req, res) => {
+    res.send('Image uploaded');
+});
+
+app.get('/posts/page/:num', (req, res) => {
+    const page = parseInt(req.params.num);
+    const limit = 2;
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    res.json(posts.slice(start, end));
 });
